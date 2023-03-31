@@ -65,7 +65,7 @@ fn is_signature_valid(sig: &Signature) -> bool {
     if app.path.segments.is_empty() {
         return false;
     }
-    if app.path.segments.last().unwrap().ident.to_string() != "App" {
+    if app.path.segments.last().unwrap().ident != "App" {
         return false;
     }
 
@@ -84,6 +84,7 @@ fn is_signature_valid(sig: &Signature) -> bool {
 }
 
 #[inline]
+#[allow(clippy::question_mark)]
 fn fn_arg_as_mut_ref_type(fn_arg: &FnArg) -> Option<&Type> {
     let FnArg::Typed(PatType { ty, .. }) = fn_arg else { return None };
     let Type::Reference(ref ref_ty) = **ty else { return None };
