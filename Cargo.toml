@@ -39,13 +39,3 @@ features = [
 [dev-dependencies]
 bevy = { version = "0.10", default-features = false }
 trybuild = "1.0"
-
-
-# [[test]]
-# name = "compile-fail"
-# path = "tests/compile_fail.rs"
-# harness = false
-
-# [[test]]
-# name = "compile-pass"
-# path = "tests/compile_pass.rs"
