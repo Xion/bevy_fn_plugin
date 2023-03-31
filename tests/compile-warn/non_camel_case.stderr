@@ -1,0 +1,19 @@
+warning: unused import: `bevy::prelude::*`
+ --> tests/compile-warn/non_camel_case.rs:5:5
+  |
+5 | use bevy::prelude::*;
+  |     ^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+error: type `non_camel_case` should have an upper camel case name
+ --> tests/compile-warn/non_camel_case.rs:8:4
+  |
+8 | fn non_camel_case(_: &mut App) {}
+  |    ^^^^^^^^^^^^^^ help: convert the identifier to upper camel case: `NonCamelCase`
+  |
+note: the lint level is defined here
+ --> tests/compile-warn/non_camel_case.rs:1:9
+  |
+1 | #![deny(non_camel_case_types)]
+  |         ^^^^^^^^^^^^^^^^^^^^
