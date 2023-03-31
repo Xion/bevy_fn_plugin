@@ -84,8 +84,8 @@ jobs:
       # Exclude compile-tests from nightly runs because nightly Rust (currently?) uses different
       # format of diagnostic output than stable does.
       - name: Test (stable)
-        if: ${{ runner.rust != 'nightly' }}
+        if: ${{ matrix.rust != 'nightly' }}
         run: cargo test
       - name: Test (nightly)
-        if: ${{ runner.rust == 'nightly' }}
+        if: ${{ matrix.rust == 'nightly' }}
         run: cargo test --test test
