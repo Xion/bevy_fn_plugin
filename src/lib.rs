@@ -1,7 +1,7 @@
 //! Procedural macro for "deriving" a Bevy [`Plugin`] from a function.
 
 use quote::quote;
-use syn::{parse_macro_input, FnArg, Ident, ItemFn, Pat, PatType, Signature, Type};
+use syn::{parse_macro_input, FnArg, Ident, ItemFn, Pat, PatType, Signature, Type, ReturnType};
 
 
 use proc_macro::TokenStream;
@@ -55,6 +55,7 @@ fn is_signature_valid(sig: &Signature) -> bool {
         return false
     }
 
+    // Check the sole argument's type.
     let Some(at_mut_app) = fn_arg_as_mut_ref_type(&sig.inputs[0]) else { return false };
     let Type::Path(app) = at_mut_app else { return false };
     if app.path.segments.is_empty() {
@@ -62,6 +63,17 @@ fn is_signature_valid(sig: &Signature) -> bool {
     }
     if app.path.segments.last().unwrap().ident.to_string() != "App" {
         return false;
+    }
+
+    // Check the return value (or rather, lack thereof).
+    match sig.output {
+        ReturnType::Default => {},
+        ReturnType::Type(_, _) => {
+            // TODO: check if the type is `()` because that's also valid
+            // (technically, that `()` may also be aliased to something else, but we can't support
+            // obnoxious cases like that without type information)
+            return false
+        },
     }
 
     true
