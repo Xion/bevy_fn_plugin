@@ -33,6 +33,16 @@ features = [
 ]
 
 
-[dev-dependencies.bevy]
-version = "0.10"
-default-features = false
+[dev-dependencies]
+bevy = { version = "0.10", default-features = false }
+compiletest_rs = { version = "0.9", features = ["tmp"] }
+
+
+[[test]]
+name = "compile-fail"
+path = "tests/compile_fail.rs"
+harness = false
+
+[[test]]
+name = "compile-pass"
+path = "tests/compile_pass.rs"
