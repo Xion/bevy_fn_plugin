@@ -1,0 +1,15 @@
+error: Invalid plugin function signature
+ --> tests/compile-fail/fn_return_type.rs:6:1
+  |
+6 | fn has_return_type(_: &mut App) -> usize { 0 }
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = help: Function should take a single argument of the type `&mut bevy::app::App`
+
+warning: unused import: `bevy::prelude::*`
+ --> tests/compile-fail/fn_return_type.rs:3:5
+  |
+3 | use bevy::prelude::*;
+  |     ^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
