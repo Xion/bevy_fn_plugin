@@ -1,5 +1,13 @@
 # bevy_fn_plugin
 
+[![Build Status](https://github.com/Xion/bevy_fn_plugin/workflows/ci/badge.svg?branch=master)][actions]
+[![Latest Version]][crates.io]
+[![Documentation]][docs.rs]
+
+[actions]: https://github.com/Xion/bevy_fn_plugin/actions
+[crates.io]: https://crates.io/crates/bevy_fn_plugin
+[docs.rs]: https://docs.rs/bevy_fn_plugin/latest/bevy_fn_plugin/
+
 Create Bevy plugins from simple functions
 
 ## Introduction
