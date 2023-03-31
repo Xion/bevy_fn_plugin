@@ -1,2 +1,6 @@
+# General Rust stuff
 /target
 /Cargo.lock
+
+# trybuild's error output candidates
+/wip
