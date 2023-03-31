@@ -87,5 +87,5 @@ jobs:
         if: ${{ runner.rust != 'nightly' }}
         run: cargo test
       - name: Test (nightly)
-        if: ${{ runner.rust == 'nightly '}}
+        if: ${{ runner.rust == 'nightly' }}
         run: cargo test --test test
