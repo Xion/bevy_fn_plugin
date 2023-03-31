@@ -1,0 +1,91 @@
+# Based on https://github.com/jprochazk/garde/blob/main/.github/workflows/ci.yml
+# and https://ectobit.com/blog/speed-up-github-actions-rust-pipelines/
+
+name: ci
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+          components: clippy
+      - name: Set up Cargo cache
+        uses: actions/cache@v3
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+      - name: Lint
+        run: |
+          cargo clippy -- -D warnings
+      # TODO: cargo-deny, cargo-outdated, etc.
+  test:
+    name: Test
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [pinned, stable, nightly]
+        include:
+        - build: pinned
+          os: ubuntu-20.04
+          rust: 1.67
+        - build: stable
+          os: ubuntu-20.04
+          rust: stable
+        - build: nightly
+          os: ubuntu-20.04
+          rust: nightly
+    runs-on: ${{ matrix.os }}
+    env:
+      CARGO_TERM_COLOR: always
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          override: true
+      - name: Set up Cargo cache
+        uses: actions/cache@v3
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+      # Exclude compile-tests from nightly runs because nightly Rust (currently?) uses different
+      # format of diagnostic output than stable does.
+      - name: Test (stable)
+        if: ${{ matrix.rust != 'nightly' }}
+        run: cargo test
+      - name: Test (nightly)
+        if: ${{ matrix.rust == 'nightly' }}
+        run: cargo test --test test
