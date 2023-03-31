@@ -77,12 +77,13 @@ any compiler warnings.
 ### How does it compare to `seldom_fn_plugin` crate?
 
 The `seldom_fn_plugin` crate doesn't actually create Bevy `Plugin` types. Instead, it applies
-the annotated functions directly to Bevy `App` object. This requires importing a custom extension
-trait and precludes the usage of `App::add_plugin`, `App::is_plugin_added`, and related plugin API.
+the annotated functions directly to the Bevy `App` object. This requires importing
+a custom extension trait and precludes the usage of `App::add_plugin`, `App::is_plugin_added`,
+and related plugin API.
 
-In contrast, `bevy_fn_plugin` does crete full-fledged Bevy `Plugin`s. If you are writing a library,
-the resulting plugin can be exposed in your public API, without requiring your users to depend
-on `bevy_fn_plugin` themselves.
+In contrast, `bevy_fn_plugin` does create full-fledged Bevy `Plugin`s.
+If you are writing a library, the resulting plugin can be exposed in your public API,
+without requiring your users to depend on `bevy_fn_plugin` themselves.
 
 ## License
 
