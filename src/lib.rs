@@ -1,14 +1,13 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+//! Procedural macro for "deriving" a Bevy [`Plugin`] from a function.
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[macro_use] extern crate quote;
+#[macro_use] extern crate syn;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+
+use proc_macro::TokenStream;
+
+
+#[proc_macro_attribute]
+pub fn bevy_plugin(attr: TokenStream, func: TokenStream) -> TokenStream {
+    func
 }
