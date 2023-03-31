@@ -1,7 +1,8 @@
 error: Invalid plugin function signature
+
+         = help: Function should take a single argument of the type `&mut bevy::app::App`
+
  --> tests/compile-fail/fn_no_args.rs:4:1
   |
 4 | fn no_arg_fn() {}
   | ^^^^^^^^^^^^^^
-  |
-  = help: Function should take a single argument of the type `&mut bevy::app::App`
