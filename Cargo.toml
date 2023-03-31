@@ -10,12 +10,20 @@ license = "MIT"
 [lib]
 proc-macro = true
 
+[features]
+default = []
+debug = [
+    "syn/extra-traits",
+]
+
+
 [dependencies]
+proc-macro-error = "1.0"
 proc-macro2 = "1.0"
 quote = "1.0"
 
 [dependencies.syn]
-version = "1.0"
+version = "2.0"
 default-features = false
 features = [
     "full",
@@ -23,6 +31,7 @@ features = [
     "printing",
     "proc-macro",
 ]
+
 
 [dev-dependencies.bevy]
 version = "0.10"
