@@ -1,5 +1,5 @@
 error: expected `fn`
- --> tests/compile-fail/empty-struct.rs:4:1
+ --> tests/compile-fail/empty_struct.rs:4:1
   |
 4 | struct EmptyStruct;
   | ^^^^^^

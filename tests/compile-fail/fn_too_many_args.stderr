@@ -1,0 +1,15 @@
+error: Invalid plugin function signature
+ --> tests/compile-fail/fn_too_many_args.rs:6:1
+  |
+6 | fn multiple_args(_: &mut App, _: usize) {}
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = help: Function should take a single argument of the type `&mut bevy::app::App`
+
+warning: unused import: `bevy::prelude::*`
+ --> tests/compile-fail/fn_too_many_args.rs:3:5
+  |
+3 | use bevy::prelude::*;
+  |     ^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default

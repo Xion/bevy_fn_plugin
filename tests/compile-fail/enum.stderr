@@ -1,0 +1,5 @@
+error: expected `fn`
+ --> tests/compile-fail/enum.rs:4:1
+  |
+4 | enum Enum {
+  | ^^^^
