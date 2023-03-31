@@ -1,12 +1,10 @@
 //! Procedural macro for "deriving" a Bevy [`Plugin`] from a function.
 
-use quote::quote;
-use syn::{parse_macro_input, FnArg, Ident, ItemFn, Pat, PatType, Signature, Type, ReturnType};
-
-
 use proc_macro::TokenStream;
 use proc_macro_error::{abort, proc_macro_error};
 use proc_macro2::TokenStream as TokenStream2;
+use quote::quote;
+use syn::{parse_macro_input, FnArg, Ident, ItemFn, Pat, PatType, Signature, Type, ReturnType};
 
 
 #[proc_macro_attribute]

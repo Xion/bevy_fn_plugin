@@ -47,6 +47,22 @@ with Bevy 0.9 or 0.8 at the very least.
 
 `bevy_fn_plugin` doesn't depend on `bevy` itself.
 
+## Limitations
+
+### Unique plugins
+
+Since Bevy 0.9, plugins can be potentially installed multiple times of the `Plugin::is_unique`
+method returns `false` (which isn't the default).
+
+`bevy_fn_plugin` doesn't override this method, which means the plugins it generates are always
+unique. This isn't a problem in practice, because the plugin instances have no state and should
+thus be interchangeable.
+
+### Generic functions
+
+Generic functions are currently not supported. This isn't a fundamental limitation; support for it
+will be added in a future release.
+
 ## FAQ
 
 ### Why the `CamelCase` functions?
