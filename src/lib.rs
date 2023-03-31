@@ -25,12 +25,18 @@ fn generate_bevy_plugin_type(item_fn: ItemFn) -> TokenStream2 {
             help = "Function should take a single argument of the type `&mut bevy::app::App`";
         }
     }
+    if !item_fn.sig.generics.params.is_empty() {
+        // TODO: support generics through PhantomData
+        abort! {
+            item_fn.sig.generics,
+            "Generic functions are not supported yet"
+        }
+    }
 
     let vis = item_fn.vis;
     // TODO: allow passing a rename="" attribute to the #[bevy_plugin] attribute
     let ident = item_fn.sig.ident;
     let body = item_fn.block;
-    // TODO: support generics through PhantomData
 
     let app_arg_name = typed_fn_arg_ident(&item_fn.sig.inputs[0])
         .map(|ident| quote! { #ident })
