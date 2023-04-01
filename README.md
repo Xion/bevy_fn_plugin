@@ -2,22 +2,23 @@
 
 [![Build Status](https://github.com/Xion/bevy_fn_plugin/workflows/ci/badge.svg?branch=master)][actions]
 [![Latest Version](https://img.shields.io/crates/v/bevy_fn_plugin.svg)][crates.io]
-[![Documentation(https://docs.rs/bevy_fn_plugin/badge.svg)]][docs.rs]
+[![Documentation](https://docs.rs/bevy_fn_plugin/badge.svg)][docs.rs]
 
 [actions]: https://github.com/Xion/bevy_fn_plugin/actions
 [crates.io]: https://crates.io/crates/bevy_fn_plugin
 [docs.rs]: https://docs.rs/bevy_fn_plugin/latest/bevy_fn_plugin/
 
-Create Bevy plugins from simple functions
+Create Bevy plugins from simple Rust functions
 
 ## Introduction
 
-`bevy_fn_plugin` allows you to easily create [Bevy](https://bevyengine.org) plugins
+`bevy_fn_plugin` lets you to create [Bevy](https://bevyengine.org) plugins
 from simple Rust functions.
 
-It exposes a single attribute, `#[bevy_plugin]`, that can be applied to `fn` items
-to turn them into Bevy `Plugin` types. The function should take a single `&mut App` argument,
-and may perform any initialization logic that a regular Bevy plugin would.
+It exposes a single attribute, `#[bevy_plugin]`, which can be applied to `fn` items
+in order to turn them into Bevy `Plugin` types.
+The function should take a single `&mut App` argument,
+and may perform any initialization logic that any regular Bevy plugin would.
 
 ## Usage
 
@@ -95,4 +96,4 @@ without requiring your users to depend on `bevy_fn_plugin` themselves.
 
 ## License
 
-`bevy_fn_plugin` is licensed under MIT.
+`bevy_fn_plugin` is dual-licensed under MIT or Apache 2.0.
