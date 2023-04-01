@@ -82,7 +82,7 @@ should thus follow the language conventions for types.
 Note that the source function isn't actually present in the final code, so its name cannot trigger
 any compiler warnings.
 
-### How does it compare to thr `seldom_fn_plugin` crate?
+### How does it compare to the `seldom_fn_plugin` crate?
 
 The `seldom_fn_plugin` crate doesn't actually create Bevy `Plugin` types. Instead, it applies
 the annotated functions directly to the Bevy `App` object. To work, it requires you to import
