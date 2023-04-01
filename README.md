@@ -12,11 +12,11 @@ Create Bevy plugins from simple functions
 
 ## Introduction
 
-`bevy_fn_plugin` allows to easily create [Bevy](https://bevyengine.org) plugins
+`bevy_fn_plugin` allows you to easily create [Bevy](https://bevyengine.org) plugins
 from simple Rust functions.
 
-It exposes a single attribute `#[bevy_plugin]` that can applied to `fn` items in order to
-turn them into Bevy `Plugin` types. The function should take the `&mut App` type,
+It exposes a single attribute, `#[bevy_plugin]`, that can be applied to `fn` items
+to turn them into Bevy `Plugin` types. The function should take a single `&mut App` argument,
 and may perform any initialization logic that a regular Bevy plugin would.
 
 ## Usage
@@ -50,8 +50,8 @@ fn main() {
 
 `bevy_fn_plugin` has been tested with Bevy 0.10.
 
-Bevy plugin API has been very stable, though, so it should be possible to use the crate
-with Bevy 0.9 or 0.8 at the very least.
+However, Bevy plugin API has been very stable for several releases now. It should be possible to
+use the crate with Bevy 0.9 and 0.8 as well, and possibly even earlier versions.
 
 `bevy_fn_plugin` doesn't depend on `bevy` itself.
 
@@ -59,34 +59,34 @@ with Bevy 0.9 or 0.8 at the very least.
 
 ### Unique plugins
 
-Since Bevy 0.9, plugins can be potentially installed multiple times of the `Plugin::is_unique`
+Since Bevy 0.9, plugins can potentially be installed multiple times if the `Plugin::is_unique`
 method returns `false` (which isn't the default).
 
-`bevy_fn_plugin` doesn't override this method, which means the plugins it generates are always
-unique. This isn't a problem in practice, because the plugin instances have no state and should
-thus be interchangeable.
+`bevy_fn_plugin` doesn't override this method, which means that the plugins it generates are always
+unique. This shouldn't be a problem in practice, because the plugin instances have no state
+and should thus be interchangeable.
 
 ### Generic functions
 
-Generic functions are currently not supported. This isn't a fundamental limitation; support for it
-will be added in a future release.
+Generic functions are currently not supported. This isn't a fundamental limitation: support for
+generic functions will be added in a future release.
 
 ## FAQ
 
 ### Why the `CamelCase` functions?
 
 `bevy_fn_plugin` converts the function into a type that implements the  `Plugin` trait.
-Because type names in Rust are conventionally camel-cased, the function name should be camel-cased
-to follow the language conventions.
+Because type names in Rust are conventionally CamelCased, the name of the source function
+should thus follow the language conventions for types.
 
 Note that the source function isn't actually present in the final code, so its name cannot trigger
 any compiler warnings.
 
-### How does it compare to `seldom_fn_plugin` crate?
+### How does it compare to thr `seldom_fn_plugin` crate?
 
 The `seldom_fn_plugin` crate doesn't actually create Bevy `Plugin` types. Instead, it applies
-the annotated functions directly to the Bevy `App` object. This requires importing
-a custom extension trait and precludes the usage of `App::add_plugin`, `App::is_plugin_added`,
+the annotated functions directly to the Bevy `App` object. To work, it requires you to import
+a custom extension trait, which precludes the usage of `App::add_plugin`, `App::is_plugin_added`,
 and related plugin API.
 
 In contrast, `bevy_fn_plugin` does create full-fledged Bevy `Plugin`s.
