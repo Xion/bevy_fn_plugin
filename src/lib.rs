@@ -1,4 +1,4 @@
-//! Procedural macro for "deriving" a Bevy [`Plugin`] from a function.
+//! Procedural macro for "deriving" a Bevy `Plugin` from a function.
 
 use proc_macro::TokenStream;
 use proc_macro_error::{abort, proc_macro_error};
@@ -32,7 +32,6 @@ fn generate_bevy_plugin_type(item_fn: ItemFn) -> TokenStream2 {
     }
 
     let vis = item_fn.vis;
-    // TODO: allow passing a rename="" attribute to the #[bevy_plugin] attribute
     let ident = item_fn.sig.ident;
     let body = item_fn.block;
 
@@ -40,7 +39,6 @@ fn generate_bevy_plugin_type(item_fn: ItemFn) -> TokenStream2 {
         .map(|ident| quote! { #ident })
         .unwrap_or_else(|| quote! { _ });
 
-    // TODO: include #[allow(non_camel_case_types)] if the name isn't camel-case
     quote! {
         #[derive(Default)]
         #vis struct #ident;
@@ -56,7 +54,7 @@ fn generate_bevy_plugin_type(item_fn: ItemFn) -> TokenStream2 {
 
 fn is_signature_valid(sig: &Signature) -> bool {
     if sig.inputs.len() != 1 {
-        return false
+        return false;
     }
 
     // Check the sole argument's type.
@@ -76,7 +74,7 @@ fn is_signature_valid(sig: &Signature) -> bool {
             // TODO: check if the type is `()` because that's also valid
             // (technically, that `()` may also be aliased to something else, but we can't support
             // obnoxious cases like that without type information)
-            return false
+            return false;
         },
     }
 
