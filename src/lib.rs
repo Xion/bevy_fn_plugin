@@ -4,7 +4,10 @@ use proc_macro::TokenStream;
 use proc_macro_error::{abort, proc_macro_error};
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
-use syn::{parse_macro_input, FnArg, Ident, ItemFn, Pat, PatType, Signature, Type, ReturnType};
+use syn::{
+    parse_macro_input,
+    FnArg, GenericParam, Ident, ItemFn, Pat, PatType, Signature, Type, ReturnType,
+};
 
 
 #[proc_macro_attribute]
@@ -23,31 +26,68 @@ fn generate_bevy_plugin_type(item_fn: ItemFn) -> TokenStream2 {
             help = "Function should take a single argument of the type `&mut bevy::app::App`";
         }
     }
-    if !item_fn.sig.generics.params.is_empty() {
-        // TODO: support generics through PhantomData
-        abort! {
-            item_fn.sig.generics,
-            "Generic functions are not supported yet"
-        }
-    }
 
     let vis = item_fn.vis;
     let ident = item_fn.sig.ident;
     let body = item_fn.block;
+
+    let has_generics = !item_fn.sig.generics.params.is_empty();
+    let (impl_generics, ty_generics, where_clause) = item_fn.sig.generics.split_for_impl();
+
+    let type_decl = if has_generics {
+        // Bind the generic parameters in a PhantomData<(...)> (phantom tuple) field.
+        let tuple_types = item_fn.sig.generics.params.iter().map(generic_param_to_phantom_type);
+        let phantom_data_param = quote! { ( #(#tuple_types),* ) };
+
+        quote! {
+            struct #ident #ty_generics
+                #where_clause
+            {
+                _marker: ::core::marker::PhantomData<#phantom_data_param>,
+            }
+        }
+    } else {
+        quote! { struct #ident; }
+    };
+
+    let derive = if has_generics { quote! {} } else { quote! { #[derive(Default)] } };
+    let extra_trait_impls = if has_generics {
+        // For generic types, we need to explicitly implement `Default` so as to not include
+        // extra `T: Default` bounds on all its type parameters.
+        let default_impl = quote! {
+            impl #impl_generics ::core::default::Default for #ident #ty_generics
+                #where_clause
+            {
+                fn default() -> Self {
+                    Self { _marker: ::core::marker::PhantomData }
+                }
+            }
+        };
+
+        quote! {
+            #default_impl
+        }
+    } else {
+        quote! {}
+    };
 
     let app_arg_name = typed_fn_arg_ident(&item_fn.sig.inputs[0])
         .map(|ident| quote! { #ident })
         .unwrap_or_else(|| quote! { _ });
 
     quote! {
-        #[derive(Default)]
-        #vis struct #ident;
+        #derive
+        #vis #type_decl
 
-        impl ::bevy::app::Plugin for #ident {
+        impl #impl_generics ::bevy::app::Plugin for #ident #ty_generics
+            #where_clause
+        {
             fn build(&self, #app_arg_name: &mut ::bevy::app::App) {
                 #body
             }
         }
+
+        #extra_trait_impls
     }
 }
 
@@ -90,6 +130,36 @@ fn fn_arg_as_mut_ref_type(fn_arg: &FnArg) -> Option<&Type> {
         return None;
     }
     Some(&*ref_ty.elem)
+}
+
+
+fn generic_param_to_phantom_type(param: &GenericParam) -> TokenStream2 {
+    match param {
+        GenericParam::Lifetime(lt_param) => {
+            let lifetime = &lt_param.lifetime;
+            quote! { ::core::cell::Cell<&#lifetime ()> }
+        },
+        GenericParam::Type(type_param) => {
+            let ty = &type_param.ident;
+            if type_param.bounds.is_empty() {
+                abort! {
+                    type_param,
+                    "Invalid type parameters bounds";
+                    note = "Generic type arguments to a #[bevy_plugin] function must be 'static";
+                    help = format!(
+                        "Add an explicit `{ty}: 'static` bound, or another bound that implies it")
+                }
+            }
+
+            // We don't use the `ty` type directly to avoid misleading the compiler about
+            // its ownership rules, and to not introduce extra trait bounds on it, like `Send`.
+            quote! { fn() -> #ty }
+        },
+        GenericParam::Const(const_param) => {
+            let ident = &const_param.ident;
+            quote! { fn() -> &'static [(); #ident] }
+        },
+    }
 }
 
 

@@ -3,6 +3,6 @@
 use bevy::prelude::*;
 
 #[bevy_plugin]
-fn generic_plugin<T>(_: &mut App) {
-    let _: Option<T> = None;
-}
+fn generic_plugin<T>(_: &mut App) {}
+
+fn main() {}

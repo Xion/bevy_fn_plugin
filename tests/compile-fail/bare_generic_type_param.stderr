@@ -1,0 +1,17 @@
+error: Invalid type parameters bounds
+
+         = note: Generic type arguments to a #[bevy_plugin] function must be 'static
+         = help: Add an explicit `T: 'static` bound, or another bound that implies it
+
+ --> tests/compile-fail/bare_generic_type_param.rs:6:19
+  |
+6 | fn generic_plugin<T>(_: &mut App) {}
+  |                   ^
+
+warning: unused import: `bevy::prelude::*`
+ --> tests/compile-fail/bare_generic_type_param.rs:3:5
+  |
+3 | use bevy::prelude::*;
+  |     ^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default

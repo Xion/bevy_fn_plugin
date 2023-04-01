@@ -51,3 +51,17 @@ fn visibility() {
     let simple_resource: &SimpleResource = app.world.get_resource().unwrap();
     assert_eq!(simple_resource.0, 42);
 }
+
+#[test]
+fn generic_with_type_param() {
+    #[bevy_plugin]
+    fn GenericPlugin<T: 'static>(_: &mut App) {
+        let _: Option<&T> = None;
+    }
+
+    struct NonDefaultType;
+
+    let mut app = App::new();
+    app.add_plugin(GenericPlugin::<NonDefaultType>::default());
+    assert!(app.is_plugin_added::<GenericPlugin<NonDefaultType>>());
+}
