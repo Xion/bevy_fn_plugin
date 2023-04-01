@@ -7,6 +7,12 @@ description = "Create Bevy plugins from functions"
 readme = "README.md"
 repository = "https://github.com/Xion/bevy_fn_plugin"
 license = "MIT OR Apache-2.0"
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "LICENSE*",
+    "README.md",
+]
 
 [lib]
 proc-macro = true
