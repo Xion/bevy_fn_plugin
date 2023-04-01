@@ -1,8 +1,8 @@
 # bevy_fn_plugin
 
 [![Build Status](https://github.com/Xion/bevy_fn_plugin/workflows/ci/badge.svg?branch=master)][actions]
-[![Latest Version]][crates.io]
-[![Documentation]][docs.rs]
+[![Latest Version](https://img.shields.io/crates/v/bevy_fn_plugin.svg)][crates.io]
+[![Documentation(https://docs.rs/bevy_fn_plugin/badge.svg)]][docs.rs]
 
 [actions]: https://github.com/Xion/bevy_fn_plugin/actions
 [crates.io]: https://crates.io/crates/bevy_fn_plugin
