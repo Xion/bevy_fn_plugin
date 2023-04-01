@@ -1,6 +1,6 @@
 [package]
 name = "bevy_fn_plugin"
-version = "0.1.2"
+version = "0.1.3-dev"
 authors = ["Karol Kuczmarski <karol.kuczmarski@gmail.com>"]
 edition = "2021"
 description = "Create Bevy plugins from functions"
