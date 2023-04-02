@@ -7,6 +7,7 @@ use quote::quote;
 use syn::{
     parse_macro_input,
     FnArg, GenericParam, Ident, ItemFn, Pat, PatType, Signature, Type, ReturnType,
+    WhereClause, WherePredicate,
 };
 
 
@@ -31,16 +32,18 @@ fn generate_bevy_plugin_type(item_fn: ItemFn) -> TokenStream2 {
     let ident = item_fn.sig.ident;
     let body = item_fn.block;
 
-    let has_generics = !item_fn.sig.generics.params.is_empty();
-    let (impl_generics, ty_generics, where_clause) = item_fn.sig.generics.split_for_impl();
+    let generics = item_fn.sig.generics;
+    let has_generics = !generics.params.is_empty();
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     let type_decl = if has_generics {
         // Bind the generic parameters in a PhantomData<(...)> (phantom tuple) field.
-        let tuple_types = item_fn.sig.generics.params.iter().map(generic_param_to_phantom_type);
+        let tuple_types = generics.params.iter()
+            .map(|param| generic_param_to_phantom_type(param, where_clause));
         let phantom_data_param = quote! { ( #(#tuple_types),* ) };
 
         quote! {
-            struct #ident #ty_generics
+            struct #ident #generics
                 #where_clause
             {
                 _marker: ::core::marker::PhantomData<#phantom_data_param>,
@@ -52,7 +55,7 @@ fn generate_bevy_plugin_type(item_fn: ItemFn) -> TokenStream2 {
 
     let derive = if has_generics { quote! {} } else { quote! { #[derive(Default)] } };
     let extra_trait_impls = if has_generics {
-        // For generic types, we need to explicitly implement `Default` so as to not include
+        // For generic types, we need to explicitly implement `Default` so as to not mandate
         // extra `T: Default` bounds on all its type parameters.
         let default_impl = quote! {
             impl #impl_generics ::core::default::Default for #ident #ty_generics
@@ -133,15 +136,42 @@ fn fn_arg_as_mut_ref_type(fn_arg: &FnArg) -> Option<&Type> {
 }
 
 
-fn generic_param_to_phantom_type(param: &GenericParam) -> TokenStream2 {
+fn generic_param_to_phantom_type(
+    param: &GenericParam, where_clause: Option<&WhereClause>,
+) -> TokenStream2 {
     match param {
         GenericParam::Lifetime(lt_param) => {
             let lifetime = &lt_param.lifetime;
-            quote! { ::core::cell::Cell<&#lifetime ()> }
+
+            // Because Bevy plugins need to be 'static types, lifetimes params are generally
+            // not supported, except for the case when they are (redundantly) bounded by 'static.
+            let has_static_bound =
+                lt_param.bounds.iter().any(|bound| bound.ident == "static") ||
+                where_clause.map(|wc| wc.predicates.iter().any(|pred| {
+                    match pred {
+                        WherePredicate::Lifetime(where_lt) =>
+                            where_lt.lifetime.ident == lifetime.ident &&
+                            where_lt.bounds.iter().any(|bound| bound.ident == "static"),
+                        _ => false,
+                    }
+                })).unwrap_or(false);
+            if !has_static_bound {
+                abort! {
+                    lt_param,
+                    "Generic lifetime arguments to a #[bevy_plugin] function are not valid";
+                    help = "Bevy plugins need to be owned types"
+                }
+            }
+
+            quote! { &#lifetime () }
         },
         GenericParam::Type(type_param) => {
             let ty = &type_param.ident;
-            if type_param.bounds.is_empty() {
+
+            let has_bounds =
+                !type_param.bounds.is_empty() ||
+                where_clause.map(|wc| !wc.predicates.is_empty()).unwrap_or(false);
+            if !has_bounds {
                 abort! {
                     type_param,
                     "Invalid type parameters bounds";

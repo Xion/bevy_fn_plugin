@@ -1,0 +1,19 @@
+error: unused import: `bevy::prelude::*`
+ --> tests/compile-warn/static_lifetime_param.rs:9:5
+  |
+9 | use bevy::prelude::*;
+  |     ^^^^^^^^^^^^^^^^
+  |
+note: the lint level is defined here
+ --> tests/compile-warn/static_lifetime_param.rs:5:9
+  |
+5 | #![deny(unused_imports)]
+  |         ^^^^^^^^^^^^^^
+
+warning: unnecessary lifetime parameter `'a`
+  --> tests/compile-warn/static_lifetime_param.rs:12:18
+   |
+12 | fn GenericPlugin<'a: 'static>(_: &mut App) {
+   |                  ^^
+   |
+   = help: you can use the `'static` lifetime directly, in place of `'a`
